@@ -997,9 +997,9 @@ if st.session_state.get('analysis_done', False):
                     
                     # 创建DataFrame来显示股票
                     if stocks_in_industry:
-                        stocks_df = pd.DataFrame(stocks_in_industry)
+                        industry_stocks_df = pd.DataFrame(stocks_in_industry)
                         st.dataframe(
-                            stocks_df, 
+                            industry_stocks_df, 
                             column_config={
                                 "代码": st.column_config.TextColumn("股票代码", width="medium"),
                                 "名称": st.column_config.TextColumn("股票名称", width="medium")
@@ -1066,9 +1066,9 @@ if st.session_state.get('analysis_done', False):
                     
                     # 创建DataFrame来显示股票
                     if stocks_in_concept:
-                        stocks_df = pd.DataFrame(stocks_in_concept)
+                        concept_stocks_df = pd.DataFrame(stocks_in_concept)
                         st.dataframe(
-                            stocks_df, 
+                            concept_stocks_df, 
                             column_config={
                                 "代码": st.column_config.TextColumn("股票代码", width="medium"),
                                 "名称": st.column_config.TextColumn("股票名称", width="medium")
@@ -1105,7 +1105,23 @@ if st.session_state.get('analysis_done', False):
         def convert_df_to_excel(df):
             output = io.BytesIO()
             with pd.ExcelWriter(output, engine='openpyxl') as writer:
-                df.to_excel(writer, index=False, sheet_name='股票分析结果')
+                # 将股票信息表格写入第一个Sheet
+                df.to_excel(writer, index=False, sheet_name='股票信息表格')
+                
+                # 如果存在行业分布数据，写入第二个Sheet
+                if 'industry_distribution' in st.session_state and st.session_state['industry_distribution']:
+                    industry_df = pd.DataFrame(list(st.session_state['industry_distribution'].items()), 
+                                             columns=['行业', '股票数量'])
+                    industry_df = industry_df.sort_values('股票数量', ascending=False)
+                    industry_df.to_excel(writer, index=False, sheet_name='行业分布')
+                
+                # 如果存在概念分布数据，写入第三个Sheet
+                if 'concept_distribution' in st.session_state and st.session_state['concept_distribution']:
+                    concept_df = pd.DataFrame(list(st.session_state['concept_distribution'].items()), 
+                                            columns=['概念', '股票数量'])
+                    concept_df = concept_df.sort_values('股票数量', ascending=False)
+                    concept_df.to_excel(writer, index=False, sheet_name='概念分布')
+                    
             return output.getvalue()
         
         excel = convert_df_to_excel(stocks_df)
