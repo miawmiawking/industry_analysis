@@ -32,7 +32,7 @@ jieba
 可以通过以下命令安装所需依赖:
 
 ```bash
-pip install -r requirements.txt
+pip install --upgrade streamlit pandas matplotlib akshare numpy jieba plotly openpyxl
 ```
 
 ## 运行应用
