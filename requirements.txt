@@ -3,4 +3,6 @@ pandas==2.1.2
 matplotlib==3.8.1
 akshare==1.16.79
 numpy==1.25.2
-jieba==0.42.1 
+jieba==0.42.1
+plotly==5.18.0
+openpyxl==3.1.2 
